@@ -30,6 +30,14 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context){
     int num_samples = 3;
     accel_data_service_subscribe(num_samples, data_handler);
     accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
+    int i;
+    for(i = 3; i > 0; i--){
+      static char countdown[] = "0";
+      snprintf(countdown, sizeof(countdown), "%d", i);
+      text_layer_set_text(testText, countdown);
+      psleep(1000);
+    }
+  text_layer_set_text(testText, "PUNCH ZAMBy");
   }
 }
 
@@ -87,14 +95,7 @@ static void game_window_load(Window *window){
   text_layer_set_font(testText, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   text_layer_set_text_alignment(testText, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(testText));
-  int i;
-  for(i = 3; i > 0; i--){
-    static char countdown[] = "0";
-    snprintf(countdown, sizeof(countdown), "%d", i);
-    text_layer_set_text(testText, countdown);
-    psleep(1000);
-  }
-  text_layer_set_text(testText, "PUNCH ZAMBy");
+  
   
   // Acceleration testing
   /*s_output_layer = text_layer_create(GRect(0, 10, 144, 100));
