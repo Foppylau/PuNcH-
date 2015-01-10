@@ -22,7 +22,7 @@ static void title_window_load(Window *window){
   text_layer_set_text(startText, "Press Select to Play.");
   text_layer_set_font(startText, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_alignment(startText, GTextAlignmentCenter);
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(titleText));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(startText));
 }
 
 static void title_window_unload(Window *window){
