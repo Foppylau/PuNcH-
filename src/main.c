@@ -88,9 +88,9 @@ static void game_window_load(Window *window){
   text_layer_set_text_alignment(testText, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(testText));
   int i;
-  for(i = 3; i < 0; i--){
-    static char countdown[];
-    snprintf(countdown, "%d", i);
+  for(i = 3; i > 0; i--){
+    static char countdown[] = "0";
+    snprintf(countdown, sizeof(countdown), "%d", i);
     text_layer_set_text(testText, countdown);
     psleep(1000);
   }
