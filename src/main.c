@@ -6,13 +6,29 @@ static Window *gameWindow;
 static TextLayer *titleText;
 static TextLayer *startText;
 static TextLayer *testText;
+static TextLayer *accText;
 static TextLayer *s_output_layer;
+
+static void data_handler(AccelData *data, uint32_t num_samples){
+  static char s_buffer[128];
+  //Compose string of data
+  snprintf(s_buffer, sizeof(s_buffer),
+          "N X,Y,Z\n0 %d,%d,%d\n1 %d,%d,%d\n2 %d%d%d",
+          data[0].x, data[0].y, data[0].z,
+          data[1].x, data[1].y, data[1].z,
+          data[2].x, data[2].y, data[2].z
+  );
+  
+}
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context){
   //text_layer_set_text(s_output_layer, "Select pressed!");
   Window *checkGame = window_stack_get_top_window();
   if(checkGame == titleWindow){
     window_stack_push(gameWindow, true);
+    int num_samples = 3;
+    accel_data_service_subscribe(num_samples, data_handler);
+    accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
   }
 }
 
@@ -70,10 +86,19 @@ static void game_window_load(Window *window){
   text_layer_set_font(testText, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   text_layer_set_text_alignment(testText, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(testText));
+  // Acceleration testing
+  accText = text_layer_create(GRect(0, 100, 144, 35));
+  text_layer_set_background_color(accText, GColorClear);
+  text_layer_set_text_color(accText, GColorBlack);
+  text_layer_set_text(accText, "Press Select to Play.");
+  text_layer_set_font(accText, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  text_layer_set_text_alignment(accText, GTextAlignmentCenter);
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(accText));
 }
 
 static void game_window_unload(Window *window){
   text_layer_destroy(testText);
+  accel_data_service_unsubscribe();
 }
 
 
@@ -95,6 +120,7 @@ static void init(){
 
 static void deinit(){
   window_destroy(titleWindow);
+  window_destroy(gameWindow);
 }
 
 
