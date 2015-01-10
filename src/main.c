@@ -6,7 +6,7 @@ static Window *gameWindow;
 static TextLayer *titleText;
 static TextLayer *startText;
 static TextLayer *testText;
-static TextLayer *accText;
+//static TextLayer *accText;
 static TextLayer *s_output_layer;
 
 static void data_handler(AccelData *data, uint32_t num_samples){
@@ -18,6 +18,7 @@ static void data_handler(AccelData *data, uint32_t num_samples){
           data[1].x, data[1].y, data[1].z,
           data[2].x, data[2].y, data[2].z
   );
+  text_layer_set_text(s_output_layer, s_buffer);
   
 }
 
@@ -85,15 +86,14 @@ static void game_window_load(Window *window){
   text_layer_set_text(testText, "gAmE oN kIdDoS!");
   text_layer_set_font(testText, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   text_layer_set_text_alignment(testText, GTextAlignmentCenter);
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(testText));
+  //layer_add_child(window_get_root_layer(window), text_layer_get_layer(testText));
   // Acceleration testing
-  accText = text_layer_create(GRect(0, 100, 144, 35));
-  text_layer_set_background_color(accText, GColorClear);
-  text_layer_set_text_color(accText, GColorBlack);
-  text_layer_set_text(accText, "Press Select to Play.");
-  text_layer_set_font(accText, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
-  text_layer_set_text_alignment(accText, GTextAlignmentCenter);
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(accText));
+  s_output_layer = text_layer_create(GRect(0, 10, 144, 50));
+  text_layer_set_text(s_output_layer, "B0P I T.");
+  text_layer_set_font(s_output_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  //text_layer_set_text_alignment(s_output_layer, GTextAlignmentCenter);
+  text_layer_set_overflow_mode(s_output_layer, GTextOverflowModeWordWrap);
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_output_layer));
 }
 
 static void game_window_unload(Window *window){
