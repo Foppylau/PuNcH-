@@ -1,0 +1,19 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "nikola.p.1337@gmail.com",
+    "longName": "PuNcH!",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "shortName": "PuNcH!",
+    "uuid": "12a60144-6cec-4c15-af34-7f78da4484dd",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": false
+    }
+}
