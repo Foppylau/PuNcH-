@@ -16,7 +16,7 @@ static void title_window_load(Window *window){
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(titleText));
   
   //Display Select to Play text
-  startTest = text_layer_create(GRect(0, 100, 144, 35));
+  startText = text_layer_create(GRect(0, 100, 144, 35));
   text_layer_set_background_color(startText, GColorClear);
   text_layer_set_text_color(startText, GColorBlack);
   text_layer_set_text(startText, "Press Select to Play.");
