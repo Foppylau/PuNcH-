@@ -2,8 +2,29 @@
 #include "main.h"
 
 static Window *titleWindow;
+//static Window *gameWindow;
 static TextLayer *titleText;
 static TextLayer *startText;
+static TextLayer *s_output_layer;
+
+static void select_click_handler(ClickRecognizerRef recognizer, void *context){
+  text_layer_set_text(s_output_layer, "Select pressed!");
+}
+
+static void up_click_handler(ClickRecognizerRef recognizer, void *context){
+  text_layer_set_text(s_output_layer, "Up pressed!");
+}
+
+static void down_click_handler(ClickRecognizerRef recognizer, void *context){
+  text_layer_set_text(s_output_layer, "Down pressed!");
+}
+
+
+static void click_config_provider(void *context){
+  window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
+  window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
+  window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
+}
 
 static void title_window_load(Window *window){
   //Display title text
@@ -23,6 +44,12 @@ static void title_window_load(Window *window){
   text_layer_set_font(startText, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_alignment(startText, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(startText));
+  
+  //Test codes for buttons
+  s_output_layer = text_layer_create(GRect(0, 10, 144,20));
+  text_layer_set_font(s_output_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
+  text_layer_set_text(s_output_layer, "fuck you");
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_output_layer));
 }
 
 static void title_window_unload(Window *window){
@@ -37,6 +64,7 @@ static void init(){
     .unload = title_window_unload
   });
   window_stack_push(titleWindow, true);
+  window_set_click_config_provider(titleWindow, click_config_provider);
 }
 
 static void deinit(){
