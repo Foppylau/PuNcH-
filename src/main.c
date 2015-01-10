@@ -10,7 +10,10 @@ static TextLayer *s_output_layer;
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context){
   //text_layer_set_text(s_output_layer, "Select pressed!");
-  window_stack_push(gameWindow, true);
+  Window *checkGame = window_stack_get_top_window();
+  if(checkGame == titleWindow){
+    window_stack_push(gameWindow, true);
+  }
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context){
