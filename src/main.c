@@ -2,13 +2,15 @@
 #include "main.h"
 
 static Window *titleWindow;
-//static Window *gameWindow;
+static Window *gameWindow;
 static TextLayer *titleText;
 static TextLayer *startText;
+static TextLayer *testText;
 static TextLayer *s_output_layer;
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context){
-  text_layer_set_text(s_output_layer, "Select pressed!");
+  //text_layer_set_text(s_output_layer, "Select pressed!");
+  window_stack_push(gameWindow, true);
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context){
@@ -57,6 +59,21 @@ static void title_window_unload(Window *window){
   text_layer_destroy(startText);
 }
 
+static void game_window_load(Window *window){
+  testText = text_layer_create(GRect(0, 50, 144, 40));
+  text_layer_set_background_color(testText, GColorBlack);
+  text_layer_set_text_color(testText, GColorWhite);
+  text_layer_set_text(testText, "gAmE oN kIdDoS!");
+  text_layer_set_font(testText, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+  text_layer_set_text_alignment(testText, GTextAlignmentCenter);
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(testText));
+}
+
+static void game_window_unload(Window *window){
+  text_layer_destroy(testText);
+}
+
+
 static void init(){
   titleWindow = window_create();
   window_set_window_handlers(titleWindow, (WindowHandlers){
@@ -65,6 +82,12 @@ static void init(){
   });
   window_stack_push(titleWindow, true);
   window_set_click_config_provider(titleWindow, click_config_provider);
+  gameWindow = window_create();
+  window_set_window_handlers(gameWindow, (WindowHandlers){
+    .load = game_window_load,
+    .unload = game_window_unload
+  });
+  window_set_click_config_provider(gameWindow, click_config_provider);
 }
 
 static void deinit(){
