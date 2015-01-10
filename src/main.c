@@ -11,7 +11,7 @@ static void title_window_load(Window *window){
   text_layer_set_background_color(titleText, GColorBlack);
   text_layer_set_text_color(titleText, GColorWhite);
   text_layer_set_text(titleText, "PuNcH!");
-  text_layer_set_font(titleText, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
+  text_layer_set_font(titleText, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   text_layer_set_text_alignment(titleText, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(titleText));
   
