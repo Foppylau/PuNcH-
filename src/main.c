@@ -36,7 +36,6 @@ static int randomNum(int low, int high){
 static void fightZamby(void *data){
   MAX_PUNCH = 0;
   //To-Do: Upload image of zombie
-  text_layer_set_text(dmgText, "");
   text_layer_set_text(testText, "GET READY...");
   punch_timer = app_timer_register(1000, punch_timer_callback, NULL);
 }
@@ -57,8 +56,8 @@ static void fight_timer_callback(void *data){
   ENEMY_HP -= MAX_PUNCH;
   USER_HP -= enemyDmg;
   
-  static char zombieHP[15];
-  static char userHP[15];
+  static char zombieHP[20];
+  static char userHP[20];
   
   snprintf(zombieHP, sizeof(zombieHP), "Zombie HP: %d", ENEMY_HP);
   snprintf(userHP, sizeof(userHP), "Player HP: %d", USER_HP);
@@ -156,16 +155,16 @@ static void game_window_load(Window *window){
   text_layer_set_text_color(dmgText, GColorBlack);
   
   text_layer_set_text(dmgText, "");
-  text_layer_set_font(dmgText, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  text_layer_set_font(dmgText, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   text_layer_set_text_alignment(dmgText, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(dmgText));
   
-  HPText = text_layer_create(GRect(0, 134, 144, 34));
+  HPText = text_layer_create(GRect(0, 130, 144, 34));
   text_layer_set_background_color(HPText, GColorClear);
   text_layer_set_text_color(HPText, GColorBlack);
   
   text_layer_set_text(HPText, "");
-  text_layer_set_font(HPText, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  text_layer_set_font(HPText, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   text_layer_set_text_alignment(HPText, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(HPText));
   

@@ -9,6 +9,11 @@
     "resources": {
         "media": [
             {
+                "file": "images/oie_1193342OW2vrzZ.png",
+                "name": "Title2",
+                "type": "png"
+            },
+            {
                 "file": "images/oie_1181725jZL1XggE.png",
                 "name": "LOSER",
                 "type": "png"
