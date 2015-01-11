@@ -1,7 +1,6 @@
 #include <pebble.h>
 #include "main.h"
   
-#define PERSIST_ZOMBIE_SCORE 1
 
 static GBitmap *titleScreen;
 static GBitmap *gameScreen;
@@ -26,7 +25,7 @@ static int USER_HP;
 static int ENEMY_HP;
 static bool bossFlag = false;
 static bool winStatus = false;
-static int zombiesSlain;
+static int zombiesSlain = 0;
 
 static int absoluteValue(int input){
   if(input < 0){
@@ -96,19 +95,11 @@ static void fight_timer_callback(void *data){
   
   if(ENEMY_HP <= 0 || USER_HP <= 0){
     if(ENEMY_HP <= 0){
-      zombiesSlain = 0;
-      //update the high score
-      if (persist_exists(PERSIST_ZOMBIE_SCORE)) {
-        zombiesSlain = persist_read_int(PERSIST_ZOMBIE_SCORE) + 1;
-      }
-      //display to user
-      persist_write_int(PERSIST_ZOMBIE_SCORE, zombiesSlain);
+      //update high score
+      zombiesSlain++;
       static char testScore[] = "Zombies Slain: 000000";
       snprintf(testScore, sizeof(testScore), "Zombies Slain: %d", zombiesSlain);
-      text_layer_set_text(zombieText, testScore);
-      
-      
-      
+      text_layer_set_text(zombieText, testScore);      
       winStatus = true;
     }
     else if(USER_HP <= 0){
@@ -135,7 +126,7 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context){
   bool gameRunning = window_stack_contains_window(gameWindow);
   if(gameRunning) window_stack_remove(gameWindow, true);
   if(checkGame != gameWindow){
-    int n = randomNum(0,6);
+    int n = randomNum(0,10);
     USER_HP = 7000;
     if(n == 5){
       bossFlag = true;
@@ -151,12 +142,12 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context){
   }
 }
 
-//static void up_click_handler(ClickRecognizerRef recognizer, void *context){
-//  
-//}
+static void up_click_handler(ClickRecognizerRef recognizer, void *context){
+  
+}
 
 static void click_config_provider(void *context){
-  //window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
+  window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
   window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
 }
 
@@ -165,14 +156,6 @@ static void title_window_load(Window *window){
   titleLayer = bitmap_layer_create(GRect(0, 0, 144, 168));
   bitmap_layer_set_bitmap(titleLayer, titleScreen);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(titleLayer));
-  
-  if (persist_exists(PERSIST_ZOMBIE_SCORE)) {
-        zombiesSlain = persist_read_int(PERSIST_ZOMBIE_SCORE);
-      }
-  persist_write_int(PERSIST_ZOMBIE_SCORE, zombiesSlain);
-  static char testScore[] = "Zombies Slain: 000000";
-  snprintf(testScore, sizeof(testScore), "Zombies Slain: %d", zombiesSlain);
-  text_layer_set_text(zombieText, testScore);
   
   //Display Select to Play text
   startText = text_layer_create(GRect(0, 100, 144, 35));
@@ -188,7 +171,7 @@ static void title_window_load(Window *window){
   text_layer_set_background_color(zombieText, GColorClear);
   text_layer_set_text_color(zombieText, GColorBlack);
   static char zombieKill[] = "Zombies Slain: 00000";
-  snprintf(zombieKill, sizeof(zombieKill), "Zombies Slain: %d", zombiesSlain);
+  //snprintf(zombieKill, sizeof(zombieKill), "Zombies Slain: 0");
   text_layer_set_text(zombieText, zombieKill);
   text_layer_set_font(zombieText, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_alignment(zombieText, GTextAlignmentCenter);
