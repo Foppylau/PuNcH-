@@ -53,6 +53,7 @@ static void fight_timer_callback(void *data){
   else{
     text_layer_set_text(testText, "You've Slain the Zombie");
   }
+  MAX_PUNCH = 0;
 }
 
 static void punch_timer_callback(void *data){
