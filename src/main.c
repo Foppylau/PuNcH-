@@ -37,7 +37,7 @@ static void data_handler(AccelData *data, uint32_t num_samples){
   magnitude += absoluteValue(data[0].y);
   magnitude += absoluteValue(data[0].z);
   if (magnitude > THRESHOLD){
-      MAX_PUNCH += magnitude;
+      MAX_PUNCH += (magnitude - 1000);
       snprintf(s_buffer, sizeof(s_buffer), "MAX: %d", MAX_PUNCH);
       text_layer_set_text(testText, s_buffer);
   }
