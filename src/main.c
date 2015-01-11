@@ -8,6 +8,9 @@ static TextLayer *startText;
 static TextLayer *testText;
 //static TextLayer *accText;
 static TextLayer *s_output_layer;
+static AppTimer *punch_timer;
+
+int currentCountdown;
 
 static void data_handler(AccelData *data, uint32_t num_samples){
   static char s_buffer[128];
@@ -21,23 +24,21 @@ static void data_handler(AccelData *data, uint32_t num_samples){
   text_layer_set_text(s_output_layer, s_buffer);
   
 }
+static void punch_timer_callback(void *data){
+ text_layer_set_text(testText, "PUNCH!");
+  
+  int num_samples = 3;
+  accel_data_service_subscribe(num_samples, data_handler);
+  accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
+}
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context){
   //text_layer_set_text(s_output_layer, "Select pressed!");
   Window *checkGame = window_stack_get_top_window();
   if(checkGame == titleWindow){
     window_stack_push(gameWindow, true);
-    int num_samples = 3;
-    accel_data_service_subscribe(num_samples, data_handler);
-    accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
-    int i;
-    for(i = 3; i > 0; i--){
-      static char countdown[] = "0";
-      snprintf(countdown, sizeof(countdown), "%d", i);
-      text_layer_set_text(testText, countdown);
-      psleep(1000);
-    }
-  text_layer_set_text(testText, "PUNCH ZAMBy");
+    
+    punch_timer = app_timer_register(1000, punch_timer_callback, NULL);
   }
 }
 
@@ -78,7 +79,7 @@ static void title_window_load(Window *window){
   //Test codes for buttons
   s_output_layer = text_layer_create(GRect(0, 10, 144,20));
   text_layer_set_font(s_output_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
-  text_layer_set_text(s_output_layer, "fuck you");
+  text_layer_set_text(s_output_layer, "love you");
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_output_layer));
 }
 
@@ -91,7 +92,8 @@ static void game_window_load(Window *window){
   testText = text_layer_create(GRect(0, 50, 144, 40));
   text_layer_set_background_color(testText, GColorBlack);
   text_layer_set_text_color(testText, GColorWhite);
-  text_layer_set_text(testText, "GET READY");
+  
+  text_layer_set_text(testText, "GET READY...");
   text_layer_set_font(testText, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   text_layer_set_text_alignment(testText, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(testText));

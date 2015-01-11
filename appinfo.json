@@ -7,7 +7,13 @@
     "longName": "PuNcH!",
     "projectType": "native",
     "resources": {
-        "media": []
+        "media": [
+            {
+                "file": "images/punch.png",
+                "name": "Puncher",
+                "type": "png"
+            }
+        ]
     },
     "shortName": "PuNcH!",
     "uuid": "12a60144-6cec-4c15-af34-7f78da4484dd",
