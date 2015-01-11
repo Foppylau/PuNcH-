@@ -58,7 +58,7 @@ static void data_handler(AccelData *data, uint32_t num_samples){
   
   int magnitude = absoluteValue(data[0].x);
   magnitude += absoluteValue(data[0].y);
-  magnitude += absoluteValue(data[0].z);
+  magnitude += absoluteValue(data[0].z) / 2;
   if (magnitude > THRESHOLD && magnitude > MAX_PUNCH){
       MAX_PUNCH = (magnitude - 1100);
   }
