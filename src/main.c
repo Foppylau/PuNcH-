@@ -9,6 +9,7 @@ static TextLayer *testText;
 static TextLayer *s_output_layer;
 static AppTimer *punch_timer;
 static AppTimer *fight_timer;
+static AppTimer *stats_timer;
 static int MAX_PUNCH = 0;
 static int USER_HP;
 static int ENEMY_HP;
@@ -27,7 +28,8 @@ static int randomNum(int low, int high){
   return (value + low);
 }
 
-static void fightZamby(){
+static void fightZamby(void *data){
+  MAX_PUNCH = 0;
   //To-Do: Upload image of zombie
   text_layer_set_text(testText, "GET READY...");
   punch_timer = app_timer_register(1000, punch_timer_callback, NULL);
@@ -54,6 +56,9 @@ static void fight_timer_callback(void *data){
   accel_data_service_unsubscribe();
   
   int enemyDmg = randomNum(500, 2500);
+  char dmgString[128];
+  snprintf(dmgString, sizeof(dmgString), "Dealt: %d", MAX_PUNCH);
+  text_layer_set_text(testText, "dmgString");
   ENEMY_HP -= MAX_PUNCH;
   USER_HP -= enemyDmg;
   
@@ -64,8 +69,7 @@ static void fight_timer_callback(void *data){
     
   }
   else{
-      MAX_PUNCH = 0;
-      fightZamby();
+      stats_timer = app_timer_register(2000, fightZamby, NULL);
   }
 }
 
@@ -93,13 +97,13 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context){
       bossFlag = false;
       ENEMY_HP = 4000;
     }
-    fightZamby();
+    fightZamby(NULL);
   }
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context){
-  MAX_PUNCH = 0;
-  text_layer_set_text(testText, "PUNCH!");
+  //MAX_PUNCH = 0;
+  //text_layer_set_text(testText, "PUNCH!");
 }
 
 static void click_config_provider(void *context){
@@ -146,6 +150,7 @@ static void game_window_load(Window *window){
   text_layer_set_text(testText, "");
   text_layer_set_font(testText, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   text_layer_set_text_alignment(testText, GTextAlignmentCenter);
+  text_layer_set_overflow_mode(testText, GTextOverflowModeWordWrap);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(testText));
 }
 
