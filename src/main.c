@@ -1,6 +1,7 @@
 #include <pebble.h>
 #include "main.h"
-
+#include <math.h>
+#define THRESHOLD 3000
 static Window *titleWindow;
 static Window *gameWindow;
 static TextLayer *titleText;
@@ -11,6 +12,7 @@ static TextLayer *s_output_layer;
 static AppTimer *punch_timer;
 
 int currentCountdown;
+int MAX_PUNCH = 0;
 
 static void data_handler(AccelData *data, uint32_t num_samples){
   static char s_buffer[128];
@@ -22,7 +24,14 @@ static void data_handler(AccelData *data, uint32_t num_samples){
           data[2].x, data[2].y, data[2].z
   );
   text_layer_set_text(s_output_layer, s_buffer);
-  
+  // Magnitude
+  float magnitude = sqrtf(data[0].x*data[0].x + data[0].y*data[0].y + data[0].z*data[0].z);
+  if (magnitude > THRESHOLD){
+    if (magnitude > MAX_PUNCH){
+      MAX_PUNCH = magnitude;
+      text_layer_set_text(testText, "DETECTED");
+    }
+  }
 }
 static void punch_timer_callback(void *data){
  text_layer_set_text(testText, "PUNCH!");
