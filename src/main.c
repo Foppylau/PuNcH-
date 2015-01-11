@@ -1,5 +1,7 @@
 #include <pebble.h>
 #include "main.h"
+  
+#define PERSIST_ZOMBIE_SCORE 10
 
 static GBitmap *titleScreen;
 static GBitmap *gameScreen;
@@ -14,6 +16,7 @@ static TextLayer *startText;
 static TextLayer *testText;
 static TextLayer *dmgText;
 static TextLayer *HPText;
+static TextLayer *zombieText;
 static AppTimer *punch_timer;
 static AppTimer *fight_timer;
 static AppTimer *stats_timer;
@@ -23,6 +26,7 @@ static int USER_HP;
 static int ENEMY_HP;
 static bool bossFlag = false;
 static bool winStatus = false;
+static int zombiesSlain;
 
 static int absoluteValue(int input){
   if(input < 0){
@@ -92,6 +96,18 @@ static void fight_timer_callback(void *data){
   
   if(ENEMY_HP <= 0 || USER_HP <= 0){
     if(ENEMY_HP <= 0){
+      zombiesSlain = 0;
+      //update the high score
+      if (persist_exists(PERSIST_ZOMBIE_SCORE)) {
+        zombiesSlain = persist_read_int(PERSIST_ZOMBIE_SCORE) + 1;
+        static char testScore[] = "Zombies Slain: 000000";
+        snprintf(testScore, sizeof(testScore), "Zombies Slain: %d", PERSIST_ZOMBIE_SCORE);
+        text_layer_set_text(zombieText, testScore);
+      }
+      persist_write_int(PERSIST_ZOMBIE_SCORE, zombiesSlain);
+      //display to user
+      
+      
       winStatus = true;
     }
     else if(USER_HP <= 0){
@@ -115,6 +131,8 @@ static void punch_timer_callback(void *data){
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context){
   Window *checkGame = window_stack_get_top_window();
+  bool gameRunning = window_stack_contains_window(gameWindow);
+  if(gameRunning) window_stack_remove(gameWindow, true);
   if(checkGame != gameWindow){
     int n = randomNum(0,6);
     USER_HP = 7000;
@@ -155,6 +173,17 @@ static void title_window_load(Window *window){
   text_layer_set_font(startText, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_alignment(startText, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(startText));
+  
+  //Display Zombie High Score
+  zombieText = text_layer_create(GRect(0, 120, 144, 28));
+  text_layer_set_background_color(zombieText, GColorClear);
+  text_layer_set_text_color(zombieText, GColorBlack);
+  static char zombieKill[] = "Zombies Slain: 00000";
+  snprintf(zombieKill, sizeof(zombieKill), "Zombies Slain: %d", zombiesSlain);
+  text_layer_set_text(zombieText, zombieKill);
+  text_layer_set_font(zombieText, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  text_layer_set_text_alignment(zombieText, GTextAlignmentCenter);
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(zombieText));
 }
 
 static void title_window_unload(Window *window){
