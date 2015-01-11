@@ -9,6 +9,7 @@ static TextLayer *testText;
 //static TextLayer *accText;
 static TextLayer *s_output_layer;
 static AppTimer *punch_timer;
+static AppTimer *fight_timer;
 static int currentCountdown;
 static int MAX_PUNCH = 0;
 
@@ -36,19 +37,31 @@ static void data_handler(AccelData *data, uint32_t num_samples){
   magnitude += absoluteValue(data[0].y);
   magnitude += absoluteValue(data[0].z);
   if (magnitude > THRESHOLD){
-    if (magnitude > MAX_PUNCH){
-      MAX_PUNCH = magnitude;
+      MAX_PUNCH += magnitude;
       snprintf(s_buffer, sizeof(s_buffer), "MAX: %d", MAX_PUNCH);
       text_layer_set_text(testText, s_buffer);
-    }
   }
 }
+
+static void fight_timer_callback(void *data){
+  accel_data_service_unsubscribe();
+  text_layer_set_font(testText, fonts_get_system_font(FONT_KEY_GOTHIC_18));
+  text_layer_set_overflow_mode(testText, GTextOverflowModeFill);
+  if(MAX_PUNCH < HITPOINTS){
+    text_layer_set_text(testText, "You've Been Eaten!");
+  }
+  else{
+    text_layer_set_text(testText, "You've Slain the Zombie");
+  }
+}
+
 static void punch_timer_callback(void *data){
  text_layer_set_text(testText, "PUNCH!");
   
   int num_samples = 3;
   accel_data_service_subscribe(num_samples, data_handler);
   accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
+  fight_timer = app_timer_register(5000, fight_timer_callback, NULL);
 }
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context){
@@ -131,7 +144,6 @@ static void game_window_load(Window *window){
 
 static void game_window_unload(Window *window){
   text_layer_destroy(testText);
-  accel_data_service_unsubscribe();
 }
 
 
