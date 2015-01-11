@@ -38,7 +38,9 @@ static void data_handler(AccelData *data, uint32_t num_samples){
   if (magnitude > THRESHOLD){
     if (magnitude > MAX_PUNCH){
       MAX_PUNCH = magnitude;
-      text_layer_set_text(testText, "DETECTED");
+      char record[] = "DETECTED: 00000";
+      snprintf(record, sizeof(record), "DETECTED: %d", MAX_PUNCH);
+      text_layer_set_text(testText, record);
     }
   }
 }
