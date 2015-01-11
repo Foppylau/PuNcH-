@@ -1,13 +1,15 @@
 #include <pebble.h>
 #include "main.h"
-  
+
+static GBitmap *titleScreen;
+static GBitmap *gameScreen;
+static BitmapLayer *zombieLayer;
+static BitmapLayer *titleLayer;
 static Window *titleWindow;
 static Window *gameWindow;
-static TextLayer *titleText;
 static TextLayer *startText;
 static TextLayer *testText;
 static TextLayer *dmgText;
-static TextLayer *s_output_layer;
 static AppTimer *punch_timer;
 static AppTimer *fight_timer;
 static AppTimer *stats_timer;
@@ -32,7 +34,7 @@ static int randomNum(int low, int high){
 static void fightZamby(void *data){
   MAX_PUNCH = 0;
   //To-Do: Upload image of zombie
-  text_layer_set_text(testText, "");
+  text_layer_set_text(dmgText, "");
   text_layer_set_text(testText, "GET READY...");
   punch_timer = app_timer_register(1000, punch_timer_callback, NULL);
 }
@@ -49,8 +51,6 @@ static void data_handler(AccelData *data, uint32_t num_samples){
   magnitude += absoluteValue(data[0].z);
   if (magnitude > THRESHOLD && magnitude > MAX_PUNCH){
       MAX_PUNCH = (magnitude - 1100);
-      snprintf(s_buffer, sizeof(s_buffer), "Damage: %d", MAX_PUNCH);
-      text_layer_set_text(testText, s_buffer);
   }
 }
 
@@ -59,7 +59,7 @@ static void fight_timer_callback(void *data){
   
   int enemyDmg = randomNum(500, 2500);
   static char dmgString[10];
-  snprintf(dmgString, sizeof(dmgString), "%d", MAX_PUNCH);
+  snprintf(dmgString, sizeof(dmgString), "%d / %d", MAX_PUNCH, ENEMY_HP);
   text_layer_set_text(testText, "You Dealt");
   text_layer_set_text(dmgText, dmgString);
   ENEMY_HP -= MAX_PUNCH;
@@ -115,14 +115,10 @@ static void click_config_provider(void *context){
 }
 
 static void title_window_load(Window *window){
-  //Display title text
-  titleText = text_layer_create(GRect(0, 50, 144, 40));
-  text_layer_set_background_color(titleText, GColorBlack);
-  text_layer_set_text_color(titleText, GColorWhite);
-  text_layer_set_text(titleText, "PuNcH!");
-  text_layer_set_font(titleText, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
-  text_layer_set_text_alignment(titleText, GTextAlignmentCenter);
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(titleText));
+  titleScreen = gbitmap_create_with_resource(RESOURCE_ID_TITLE);
+  titleLayer = bitmap_layer_create(GRect(0, 0, 144, 168));
+  bitmap_layer_set_bitmap(titleLayer, titleScreen);
+  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(titleLayer));
   
   //Display Select to Play text
   startText = text_layer_create(GRect(0, 100, 144, 35));
@@ -132,23 +128,23 @@ static void title_window_load(Window *window){
   text_layer_set_font(startText, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_alignment(startText, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(startText));
-  
-  //Test codes for buttons
-  s_output_layer = text_layer_create(GRect(0, 10, 144,20));
-  text_layer_set_font(s_output_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
-  text_layer_set_text(s_output_layer, "love you");
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_output_layer));
 }
 
 static void title_window_unload(Window *window){
-  text_layer_destroy(titleText);
   text_layer_destroy(startText);
+  gbitmap_destroy(titleScreen);
+  bitmap_layer_destroy(titleLayer);
 }
 
 static void game_window_load(Window *window){
+  gameScreen = gbitmap_create_with_resource(RESOURCE_ID_ZOMBIE);
+  zombieLayer = bitmap_layer_create(GRect(45, 3, 59, 60));
+  bitmap_layer_set_bitmap(zombieLayer, gameScreen);
+  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(zombieLayer));
+  
   testText = text_layer_create(GRect(0, 50, 144, 40));
-  text_layer_set_background_color(testText, GColorBlack);
-  text_layer_set_text_color(testText, GColorWhite);
+  text_layer_set_background_color(testText, GColorClear);
+  text_layer_set_text_color(testText, GColorBlack);
   
   text_layer_set_text(testText, "");
   text_layer_set_font(testText, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
@@ -168,6 +164,8 @@ static void game_window_load(Window *window){
 
 static void game_window_unload(Window *window){
   text_layer_destroy(testText);
+  gbitmap_destroy(gameScreen);
+  bitmap_layer_destroy(zombieLayer);
 }
 
 

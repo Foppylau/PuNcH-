@@ -9,8 +9,23 @@
     "resources": {
         "media": [
             {
-                "file": "images/punch.png",
-                "name": "Puncher",
+                "file": "images/oie_1181725jZL1XggE.png",
+                "name": "LOSER",
+                "type": "png"
+            },
+            {
+                "file": "images/ZombieTitle.png",
+                "name": "TITLE",
+                "type": "png"
+            },
+            {
+                "file": "images/winning facd.png",
+                "name": "WINNER",
+                "type": "png"
+            },
+            {
+                "file": "images/zombie.png",
+                "name": "ZOMBIE",
                 "type": "png"
             }
         ]
