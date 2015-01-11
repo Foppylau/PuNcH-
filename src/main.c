@@ -38,7 +38,10 @@ static int randomNum(int low, int high){
 }
 
 static void delay_timer_callback(void *data){
-  return;
+  text_layer_set_text(dmgText, "");
+  text_layer_set_text(HPText, "");
+  window_stack_remove(gameWindow, true);
+  window_stack_push(endWindow, true);
 }
 
 static void fightZamby(void *data){
@@ -95,10 +98,6 @@ static void fight_timer_callback(void *data){
       winStatus = false;
     }
     delay_timer = app_timer_register(2000, delay_timer_callback, NULL);
-    text_layer_set_text(dmgText, "");
-    text_layer_set_text(HPText, "");
-    window_stack_remove(gameWindow, true);
-    window_stack_push(endWindow, true);
   }
   else{
       stats_timer = app_timer_register(2000, fightZamby, NULL);
@@ -121,7 +120,7 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context){
     
     int n = randomNum(0,6);
     USER_HP = 7000;
-    if(n == 6){
+    if(n > 4){
       bossFlag = true;
       ENEMY_HP = 20000;
     }
@@ -210,7 +209,7 @@ static void game_window_unload(Window *window){
 static void end_window_load(Window *window){
   endScreen = gbitmap_create_with_resource(RESOURCE_ID_LOSER);
   if(winStatus == true) endScreen = gbitmap_create_with_resource(RESOURCE_ID_WINNER);
-  endLayer = bitmap_layer_create(GRect(0, 0, 144, 168));
+  endLayer = bitmap_layer_create(GRect(0, -22, 144, 168));
   bitmap_layer_set_bitmap(endLayer, endScreen);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(endLayer));
 }
