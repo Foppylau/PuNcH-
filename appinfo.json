@@ -9,6 +9,11 @@
     "resources": {
         "media": [
             {
+                "file": "images/GrandZombie.png",
+                "name": "LordZamby",
+                "type": "png"
+            },
+            {
                 "file": "images/Zombie.png",
                 "name": "ZAMBY",
                 "type": "png"

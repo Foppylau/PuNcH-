@@ -116,8 +116,6 @@ static void punch_timer_callback(void *data){
 static void select_click_handler(ClickRecognizerRef recognizer, void *context){
   Window *checkGame = window_stack_get_top_window();
   if(checkGame != gameWindow){
-    window_stack_push(gameWindow, true);
-    
     int n = randomNum(0,6);
     USER_HP = 7000;
     if(n == 5){
@@ -128,6 +126,8 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context){
       bossFlag = false;
       ENEMY_HP = 8000;
     }
+    
+    window_stack_push(gameWindow, true);
     fightZamby(NULL);
   }
 }
@@ -164,7 +164,9 @@ static void title_window_unload(Window *window){
 }
 
 static void game_window_load(Window *window){
-  gameScreen = gbitmap_create_with_resource(RESOURCE_ID_ZOMBIE);
+  if(bossFlag) gameScreen = gbitmap_create_with_resource(RESOURCE_ID_LordZamby);
+  else gameScreen = gbitmap_create_with_resource(RESOURCE_ID_ZAMBY);
+  
   zombieLayer = bitmap_layer_create(GRect(45, 3, 59, 60));
   bitmap_layer_set_bitmap(zombieLayer, gameScreen);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(zombieLayer));
