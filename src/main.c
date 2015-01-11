@@ -10,6 +10,7 @@ static Window *gameWindow;
 static TextLayer *startText;
 static TextLayer *testText;
 static TextLayer *dmgText;
+static TextLayer *HPText;
 static AppTimer *punch_timer;
 static AppTimer *fight_timer;
 static AppTimer *stats_timer;
@@ -61,8 +62,8 @@ static void fight_timer_callback(void *data){
   
   snprintf(zombieHP, sizeof(zombieHP), "Zombie HP: %d", ENEMY_HP);
   snprintf(userHP, sizeof(userHP), "Player HP: %d", USER_HP);
-  text_layer_set_text(testText, zombieHP);
-  text_layer_set_text(dmgText, userHP);
+  text_layer_set_text(dmgText, zombieHP);
+  text_layer_set_text(HPText, userHP);
   
   if(ENEMY_HP <= 0){
     
@@ -104,8 +105,7 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context){
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context){
-  //MAX_PUNCH = 0;
-  //text_layer_set_text(testText, "PUNCH!");
+  
 }
 
 static void click_config_provider(void *context){
@@ -151,14 +151,25 @@ static void game_window_load(Window *window){
   text_layer_set_overflow_mode(testText, GTextOverflowModeWordWrap);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(testText));
   
-  dmgText = text_layer_create(GRect(0, 100, 144, 60));
+  dmgText = text_layer_create(GRect(0, 100, 144, 34));
   text_layer_set_background_color(dmgText, GColorClear);
   text_layer_set_text_color(dmgText, GColorBlack);
   
   text_layer_set_text(dmgText, "");
-  text_layer_set_font(dmgText, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+  text_layer_set_font(dmgText, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_alignment(dmgText, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(dmgText));
+  
+  HPText = text_layer_create(GRect(0, 134, 144, 34));
+  text_layer_set_background_color(HPText, GColorClear);
+  text_layer_set_text_color(HPText, GColorBlack);
+  
+  text_layer_set_text(HPText, "");
+  text_layer_set_font(HPText, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  text_layer_set_text_alignment(HPText, GTextAlignmentCenter);
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(HPText));
+  
+  
 }
 
 static void game_window_unload(Window *window){
