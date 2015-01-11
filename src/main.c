@@ -17,6 +17,7 @@ static TextLayer *HPText;
 static AppTimer *punch_timer;
 static AppTimer *fight_timer;
 static AppTimer *stats_timer;
+static AppTimer *delay_timer;
 static int MAX_PUNCH = 0;
 static int USER_HP;
 static int ENEMY_HP;
@@ -34,6 +35,10 @@ static int randomNum(int low, int high){
   int value = rand();
   value = value % (high-low);
   return (value + low);
+}
+
+static void delay_timer_callback(void *data){
+  return;
 }
 
 static void fightZamby(void *data){
@@ -89,6 +94,7 @@ static void fight_timer_callback(void *data){
     else if(USER_HP <= 0){
       winStatus = false;
     }
+    delay_timer = app_timer_register(2000, delay_timer_callback, NULL);
     text_layer_set_text(dmgText, "");
     text_layer_set_text(HPText, "");
     window_stack_remove(gameWindow, true);
