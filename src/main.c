@@ -14,6 +14,7 @@ static AppTimer *punch_timer;
 static AppTimer *fight_timer;
 static AppTimer *stats_timer;
 static int MAX_PUNCH = 0;
+static int totalDamage = 0;
 static int USER_HP;
 static int ENEMY_HP;
 static bool bossFlag = false;
@@ -40,12 +41,7 @@ static void fightZamby(void *data){
 }
 
 static void data_handler(AccelData *data, uint32_t num_samples){
-  static char s_buffer[128];
-  //Compose string of data
-  snprintf(s_buffer, sizeof(s_buffer),
-          "%d,%d,%d",
-          data[0].x, data[0].y, data[0].z
-  );
+  
   int magnitude = absoluteValue(data[0].x);
   magnitude += absoluteValue(data[0].y);
   magnitude += absoluteValue(data[0].z);
@@ -56,14 +52,17 @@ static void data_handler(AccelData *data, uint32_t num_samples){
 
 static void fight_timer_callback(void *data){
   accel_data_service_unsubscribe();
-  
   int enemyDmg = randomNum(500, 2500);
-  static char dmgString[10];
-  snprintf(dmgString, sizeof(dmgString), "%d / %d", MAX_PUNCH, ENEMY_HP);
-  text_layer_set_text(testText, "You Dealt");
-  text_layer_set_text(dmgText, dmgString);
   ENEMY_HP -= MAX_PUNCH;
   USER_HP -= enemyDmg;
+  
+  static char zombieHP[15];
+  static char userHP[15];
+  
+  snprintf(zombieHP, sizeof(zombieHP), "Zombie HP: %d", ENEMY_HP);
+  snprintf(userHP, sizeof(userHP), "Player HP: %d", USER_HP);
+  text_layer_set_text(testText, zombieHP);
+  text_layer_set_text(dmgText, userHP);
   
   if(ENEMY_HP <= 0){
     
