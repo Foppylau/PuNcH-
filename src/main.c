@@ -9,14 +9,28 @@ static TextLayer *testText;
 static TextLayer *s_output_layer;
 static AppTimer *punch_timer;
 static AppTimer *fight_timer;
-static int currentCountdown;
 static int MAX_PUNCH = 0;
+static int USER_HP;
+static int ENEMY_HP;
+static bool bossFlag = false;
 
 static int absoluteValue(int input){
   if(input < 0){
     input *= -1;
   }
   return input;
+}
+
+static int randomNum(int low, int high){
+  int value = rand();
+  value = value % (high-low);
+  return (value + low);
+}
+
+static void fightZamby(){
+  //To-Do: Upload image of zombie
+  text_layer_set_text(testText, "GET READY...");
+  punch_timer = app_timer_register(1000, punch_timer_callback, NULL);
 }
 
 static void data_handler(AccelData *data, uint32_t num_samples){
@@ -29,24 +43,30 @@ static void data_handler(AccelData *data, uint32_t num_samples){
   int magnitude = absoluteValue(data[0].x);
   magnitude += absoluteValue(data[0].y);
   magnitude += absoluteValue(data[0].z);
-  if (magnitude > THRESHOLD){
-      MAX_PUNCH += (magnitude - 1100);
-      snprintf(s_buffer, sizeof(s_buffer), "MAX: %d", MAX_PUNCH);
+  if (magnitude > THRESHOLD && magnitude > MAX_PUNCH){
+      MAX_PUNCH = (magnitude - 1100);
+      snprintf(s_buffer, sizeof(s_buffer), "Damage: %d", MAX_PUNCH);
       text_layer_set_text(testText, s_buffer);
   }
 }
 
 static void fight_timer_callback(void *data){
   accel_data_service_unsubscribe();
-  text_layer_set_font(testText, fonts_get_system_font(FONT_KEY_GOTHIC_18));
-  text_layer_set_overflow_mode(testText, GTextOverflowModeFill);
-  if(MAX_PUNCH < HITPOINTS){
-    text_layer_set_text(testText, "You've Been Eaten!");
+  
+  int enemyDmg = randomNum(500, 2500);
+  ENEMY_HP -= MAX_PUNCH;
+  USER_HP -= enemyDmg;
+  
+  if(ENEMY_HP <= 0){
+    
+  }
+  else if(USER_HP <= 0){
+    
   }
   else{
-    text_layer_set_text(testText, "You've Slain the Zombie");
+      MAX_PUNCH = 0;
+      fightZamby();
   }
-  MAX_PUNCH = 0;
 }
 
 static void punch_timer_callback(void *data){
@@ -55,7 +75,7 @@ static void punch_timer_callback(void *data){
   int num_samples = 3;
   accel_data_service_subscribe(num_samples, data_handler);
   accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
-  fight_timer = app_timer_register(5000, fight_timer_callback, NULL);
+  fight_timer = app_timer_register(1500, fight_timer_callback, NULL);
 }
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context){
@@ -63,7 +83,17 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context){
   if(checkGame == titleWindow){
     window_stack_push(gameWindow, true);
     
-    punch_timer = app_timer_register(1000, punch_timer_callback, NULL);
+    int n = randomNum(0,6);
+    USER_HP = 5000;
+    if(n == 6){
+      bossFlag = true;
+      ENEMY_HP = 10000;
+    }
+    else{
+      bossFlag = false;
+      ENEMY_HP = 4000;
+    }
+    fightZamby();
   }
 }
 
@@ -113,7 +143,7 @@ static void game_window_load(Window *window){
   text_layer_set_background_color(testText, GColorBlack);
   text_layer_set_text_color(testText, GColorWhite);
   
-  text_layer_set_text(testText, "GET READY...");
+  text_layer_set_text(testText, "");
   text_layer_set_font(testText, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   text_layer_set_text_alignment(testText, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(testText));
