@@ -56,9 +56,24 @@ static void fight_timer_callback(void *data){
   ENEMY_HP -= MAX_PUNCH;
   USER_HP -= enemyDmg;
   
+  if(MAX_PUNCH >= 3000){
+    text_layer_set_text(testText, "MEGA PUNCH!");
+  }
+  else if(MAX_PUNCH >= 2000){
+    text_layer_set_text(testText, "Sweet Hit");
+  }
+  else if(MAX_PUNCH >= 1500){
+    text_layer_set_text(testText, "Not Bad");
+  }
+  else if(MAX_PUNCH >= 1000){
+    text_layer_set_text(testText, "Try Harder");
+  }
+  else{
+    text_layer_set_text(testText, "C'mon Man...");
+  }
+  
   static char zombieHP[20];
   static char userHP[20];
-  
   snprintf(zombieHP, sizeof(zombieHP), "Zombie HP: %d", ENEMY_HP);
   snprintf(userHP, sizeof(userHP), "Player HP: %d", USER_HP);
   text_layer_set_text(dmgText, zombieHP);
@@ -159,7 +174,7 @@ static void game_window_load(Window *window){
   text_layer_set_text_alignment(dmgText, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(dmgText));
   
-  HPText = text_layer_create(GRect(0, 130, 144, 34));
+  HPText = text_layer_create(GRect(0, 120, 144, 34));
   text_layer_set_background_color(HPText, GColorClear);
   text_layer_set_text_color(HPText, GColorBlack);
   
