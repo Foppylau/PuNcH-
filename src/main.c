@@ -1,7 +1,7 @@
 #include <pebble.h>
 #include "main.h"
   
-#define PERSIST_ZOMBIE_SCORE 10
+#define PERSIST_ZOMBIE_SCORE 1
 
 static GBitmap *titleScreen;
 static GBitmap *gameScreen;
@@ -100,12 +100,13 @@ static void fight_timer_callback(void *data){
       //update the high score
       if (persist_exists(PERSIST_ZOMBIE_SCORE)) {
         zombiesSlain = persist_read_int(PERSIST_ZOMBIE_SCORE) + 1;
-        static char testScore[] = "Zombies Slain: 000000";
-        snprintf(testScore, sizeof(testScore), "Zombies Slain: %d", PERSIST_ZOMBIE_SCORE);
-        text_layer_set_text(zombieText, testScore);
       }
-      persist_write_int(PERSIST_ZOMBIE_SCORE, zombiesSlain);
       //display to user
+      persist_write_int(PERSIST_ZOMBIE_SCORE, zombiesSlain);
+      static char testScore[] = "Zombies Slain: 000000";
+      snprintf(testScore, sizeof(testScore), "Zombies Slain: %d", zombiesSlain);
+      text_layer_set_text(zombieText, testScore);
+      
       
       
       winStatus = true;
@@ -150,12 +151,12 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context){
   }
 }
 
-static void up_click_handler(ClickRecognizerRef recognizer, void *context){
-  
-}
+//static void up_click_handler(ClickRecognizerRef recognizer, void *context){
+//  
+//}
 
 static void click_config_provider(void *context){
-  window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
+  //window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
   window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
 }
 
@@ -164,6 +165,14 @@ static void title_window_load(Window *window){
   titleLayer = bitmap_layer_create(GRect(0, 0, 144, 168));
   bitmap_layer_set_bitmap(titleLayer, titleScreen);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(titleLayer));
+  
+  if (persist_exists(PERSIST_ZOMBIE_SCORE)) {
+        zombiesSlain = persist_read_int(PERSIST_ZOMBIE_SCORE);
+      }
+  persist_write_int(PERSIST_ZOMBIE_SCORE, zombiesSlain);
+  static char testScore[] = "Zombies Slain: 000000";
+  snprintf(testScore, sizeof(testScore), "Zombies Slain: %d", zombiesSlain);
+  text_layer_set_text(zombieText, testScore);
   
   //Display Select to Play text
   startText = text_layer_create(GRect(0, 100, 144, 35));
