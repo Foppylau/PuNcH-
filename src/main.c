@@ -122,7 +122,7 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context){
     USER_HP = 7000;
     if(n == 5){
       bossFlag = true;
-      ENEMY_HP = 20000;
+      ENEMY_HP = 15000;
     }
     else{
       bossFlag = false;

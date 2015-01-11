@@ -9,6 +9,11 @@
     "resources": {
         "media": [
             {
+                "file": "images/Zombie.png",
+                "name": "ZAMBY",
+                "type": "png"
+            },
+            {
                 "file": "images/oie_BYObSLpinjeA.png",
                 "name": "LOSER",
                 "type": "png"
