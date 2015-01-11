@@ -32,6 +32,7 @@ static int randomNum(int low, int high){
 static void fightZamby(void *data){
   MAX_PUNCH = 0;
   //To-Do: Upload image of zombie
+  text_layer_set_text(testText, "");
   text_layer_set_text(testText, "GET READY...");
   punch_timer = app_timer_register(1000, punch_timer_callback, NULL);
 }
@@ -160,7 +161,7 @@ static void game_window_load(Window *window){
   text_layer_set_text_color(dmgText, GColorBlack);
   
   text_layer_set_text(dmgText, "");
-  text_layer_set_font(dmgText, fonts_get_system_font(FONT_KEY_GOTHIC_24));
+  text_layer_set_font(dmgText, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   text_layer_set_text_alignment(dmgText, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(dmgText));
 }
