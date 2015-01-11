@@ -126,7 +126,7 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context){
   bool gameRunning = window_stack_contains_window(gameWindow);
   if(gameRunning) window_stack_remove(gameWindow, true);
   if(checkGame != gameWindow){
-    int n = randomNum(0,10);
+    int n = randomNum(0,7);
     USER_HP = 7000;
     if(n == 5){
       bossFlag = true;
@@ -170,7 +170,7 @@ static void title_window_load(Window *window){
   zombieText = text_layer_create(GRect(0, 120, 144, 28));
   text_layer_set_background_color(zombieText, GColorClear);
   text_layer_set_text_color(zombieText, GColorBlack);
-  static char zombieKill[] = "Zombies Slain: 00000";
+  static char zombieKill[] = "Zombies Slain: 0";
   //snprintf(zombieKill, sizeof(zombieKill), "Zombies Slain: 0");
   text_layer_set_text(zombieText, zombieKill);
   text_layer_set_font(zombieText, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
