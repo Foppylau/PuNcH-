@@ -6,6 +6,7 @@ static Window *gameWindow;
 static TextLayer *titleText;
 static TextLayer *startText;
 static TextLayer *testText;
+static TextLayer *dmgText;
 static TextLayer *s_output_layer;
 static AppTimer *punch_timer;
 static AppTimer *fight_timer;
@@ -56,9 +57,10 @@ static void fight_timer_callback(void *data){
   accel_data_service_unsubscribe();
   
   int enemyDmg = randomNum(500, 2500);
-  char dmgString[128];
-  snprintf(dmgString, sizeof(dmgString), "Dealt: %d", MAX_PUNCH);
-  text_layer_set_text(testText, "dmgString");
+  static char dmgString[10];
+  snprintf(dmgString, sizeof(dmgString), "%d", MAX_PUNCH);
+  text_layer_set_text(testText, "You Dealt");
+  text_layer_set_text(dmgText, dmgString);
   ENEMY_HP -= MAX_PUNCH;
   USER_HP -= enemyDmg;
   
@@ -152,6 +154,15 @@ static void game_window_load(Window *window){
   text_layer_set_text_alignment(testText, GTextAlignmentCenter);
   text_layer_set_overflow_mode(testText, GTextOverflowModeWordWrap);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(testText));
+  
+  dmgText = text_layer_create(GRect(0, 100, 144, 60));
+  text_layer_set_background_color(dmgText, GColorClear);
+  text_layer_set_text_color(dmgText, GColorBlack);
+  
+  text_layer_set_text(dmgText, "");
+  text_layer_set_font(dmgText, fonts_get_system_font(FONT_KEY_GOTHIC_24));
+  text_layer_set_text_alignment(dmgText, GTextAlignmentCenter);
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(dmgText));
 }
 
 static void game_window_unload(Window *window){
