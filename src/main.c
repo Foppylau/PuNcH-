@@ -6,7 +6,6 @@ static Window *gameWindow;
 static TextLayer *titleText;
 static TextLayer *startText;
 static TextLayer *testText;
-//static TextLayer *accText;
 static TextLayer *s_output_layer;
 static AppTimer *punch_timer;
 static AppTimer *fight_timer;
@@ -27,17 +26,11 @@ static void data_handler(AccelData *data, uint32_t num_samples){
           "%d,%d,%d",
           data[0].x, data[0].y, data[0].z
   );
-  //text_layer_set_text(testText, s_buffer);
-  // Magnitude
-  //float magnitude = sqrtf(data[0].x*data[0].x + data[0].y*data[0].y + data[0].z*data[0].z);
-  /*int a = absoluteValue(data[0].x);
-  int b = absoluteValue(data[0].y);
-  int c = absoluteValue(data[0].z);*/
   int magnitude = absoluteValue(data[0].x);
   magnitude += absoluteValue(data[0].y);
   magnitude += absoluteValue(data[0].z);
   if (magnitude > THRESHOLD){
-      MAX_PUNCH += (magnitude - 1000);
+      MAX_PUNCH += (magnitude - 1100);
       snprintf(s_buffer, sizeof(s_buffer), "MAX: %d", MAX_PUNCH);
       text_layer_set_text(testText, s_buffer);
   }
@@ -66,7 +59,6 @@ static void punch_timer_callback(void *data){
 }
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context){
-  //text_layer_set_text(s_output_layer, "Select pressed!");
   Window *checkGame = window_stack_get_top_window();
   if(checkGame == titleWindow){
     window_stack_push(gameWindow, true);
@@ -80,14 +72,8 @@ static void up_click_handler(ClickRecognizerRef recognizer, void *context){
   text_layer_set_text(testText, "PUNCH!");
 }
 
-static void down_click_handler(ClickRecognizerRef recognizer, void *context){
-  text_layer_set_text(s_output_layer, "Down pressed!");
-}
-
-
 static void click_config_provider(void *context){
   window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
-  window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
   window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
 }
 
@@ -131,16 +117,6 @@ static void game_window_load(Window *window){
   text_layer_set_font(testText, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   text_layer_set_text_alignment(testText, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(testText));
-  
-  
-  // Acceleration testing
-  /*s_output_layer = text_layer_create(GRect(0, 10, 144, 100));
-  text_layer_set_text(s_output_layer, "B0P I T.");
-  text_layer_set_font(s_output_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
-  //text_layer_set_text_alignment(s_output_layer, GTextAlignmentCenter);
-  text_layer_set_overflow_mode(s_output_layer, GTextOverflowModeWordWrap);
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_output_layer));
-*/
 }
 
 static void game_window_unload(Window *window){
