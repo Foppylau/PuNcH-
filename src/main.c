@@ -7,6 +7,9 @@ static BitmapLayer *zombieLayer;
 static BitmapLayer *titleLayer;
 static Window *titleWindow;
 static Window *gameWindow;
+static Window *endWindow;
+static BitmapLayer *endLayer;
+static GBitmap *endScreen;
 static TextLayer *startText;
 static TextLayer *testText;
 static TextLayer *dmgText;
@@ -15,10 +18,10 @@ static AppTimer *punch_timer;
 static AppTimer *fight_timer;
 static AppTimer *stats_timer;
 static int MAX_PUNCH = 0;
-static int totalDamage = 0;
 static int USER_HP;
 static int ENEMY_HP;
 static bool bossFlag = false;
+static bool winStatus = false;
 
 static int absoluteValue(int input){
   if(input < 0){
@@ -79,11 +82,17 @@ static void fight_timer_callback(void *data){
   text_layer_set_text(dmgText, zombieHP);
   text_layer_set_text(HPText, userHP);
   
-  if(ENEMY_HP <= 0){
-    
-  }
-  else if(USER_HP <= 0){
-    
+  if(ENEMY_HP <= 0 || USER_HP <= 0){
+    if(ENEMY_HP <= 0){
+      winStatus = true;
+    }
+    else if(USER_HP <= 0){
+      winStatus = false;
+    }
+    text_layer_set_text(dmgText, "");
+    text_layer_set_text(HPText, "");
+    window_stack_remove(gameWindow, true);
+    window_stack_push(endWindow, true);
   }
   else{
       stats_timer = app_timer_register(2000, fightZamby, NULL);
@@ -101,18 +110,18 @@ static void punch_timer_callback(void *data){
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context){
   Window *checkGame = window_stack_get_top_window();
-  if(checkGame == titleWindow){
+  if(checkGame != gameWindow){
     window_stack_push(gameWindow, true);
     
     int n = randomNum(0,6);
-    USER_HP = 5000;
+    USER_HP = 7000;
     if(n == 6){
       bossFlag = true;
-      ENEMY_HP = 10000;
+      ENEMY_HP = 20000;
     }
     else{
       bossFlag = false;
-      ENEMY_HP = 4000;
+      ENEMY_HP = 8000;
     }
     fightZamby(NULL);
   }
@@ -192,7 +201,18 @@ static void game_window_unload(Window *window){
   bitmap_layer_destroy(zombieLayer);
 }
 
+static void end_window_load(Window *window){
+  endScreen = gbitmap_create_with_resource(RESOURCE_ID_LOSER);
+  if(winStatus == true) endScreen = gbitmap_create_with_resource(RESOURCE_ID_WINNER);
+  endLayer = bitmap_layer_create(GRect(0, 0, 144, 168));
+  bitmap_layer_set_bitmap(endLayer, endScreen);
+  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(endLayer));
+}
 
+static void end_window_unload(Window *window){
+  gbitmap_destroy(endScreen);
+  bitmap_layer_destroy(endLayer);
+}
 static void init(){
   titleWindow = window_create();
   window_set_window_handlers(titleWindow, (WindowHandlers){
@@ -207,11 +227,18 @@ static void init(){
     .unload = game_window_unload
   });
   window_set_click_config_provider(gameWindow, click_config_provider);
+  endWindow = window_create();
+  window_set_window_handlers(endWindow, (WindowHandlers){
+    .load = end_window_load,
+    .unload = end_window_unload
+  });
+  window_set_click_config_provider(gameWindow, click_config_provider);
 }
 
 static void deinit(){
   window_destroy(titleWindow);
   window_destroy(gameWindow);
+  window_destroy(endWindow);
 }
 
 

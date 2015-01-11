@@ -9,13 +9,19 @@
     "resources": {
         "media": [
             {
-                "file": "images/oie_1193342OW2vrzZ.png",
-                "name": "Title2",
+                "file": "images/oie_BYObSLpinjeA.png",
+                "name": "LOSER",
                 "type": "png"
             },
             {
-                "file": "images/oie_1181725jZL1XggE.png",
-                "name": "LOSER",
+                "file": "images/oie_1192739DLYHXO7O.png",
+                "menuIcon": true,
+                "name": "logo",
+                "type": "png"
+            },
+            {
+                "file": "images/oie_1193342OW2vrzZ.png",
+                "name": "Title2",
                 "type": "png"
             },
             {
