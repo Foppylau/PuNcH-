@@ -23,24 +23,23 @@ static void data_handler(AccelData *data, uint32_t num_samples){
   static char s_buffer[128];
   //Compose string of data
   snprintf(s_buffer, sizeof(s_buffer),
-          "N X,Y,Z\n0 %d,%d,%d\n1 %d,%d,%d\n2 %d%d%d",
-          data[0].x, data[0].y, data[0].z,
-          data[1].x, data[1].y, data[1].z,
-          data[2].x, data[2].y, data[2].z
+          "%d,%d,%d",
+          data[0].x, data[0].y, data[0].z
   );
-  text_layer_set_text(s_output_layer, s_buffer);
+  //text_layer_set_text(testText, s_buffer);
   // Magnitude
   //float magnitude = sqrtf(data[0].x*data[0].x + data[0].y*data[0].y + data[0].z*data[0].z);
-  int a = absoluteValue(data[0].x);
+  /*int a = absoluteValue(data[0].x);
   int b = absoluteValue(data[0].y);
-  int c = absoluteValue(data[0].z);
-  float magnitude = (a + b + c) / 3;
+  int c = absoluteValue(data[0].z);*/
+  int magnitude = absoluteValue(data[0].x);
+  magnitude += absoluteValue(data[0].y);
+  magnitude += absoluteValue(data[0].z);
   if (magnitude > THRESHOLD){
     if (magnitude > MAX_PUNCH){
       MAX_PUNCH = magnitude;
-      char record[] = "DETECTED: 9000";
-      //snprintf(record, sizeof(record), "DETECTED: %d", MAX_PUNCH);
-      text_layer_set_text(testText, record);
+      snprintf(s_buffer, sizeof(s_buffer), "MAX: %d", MAX_PUNCH);
+      text_layer_set_text(testText, s_buffer);
     }
   }
 }
@@ -63,7 +62,8 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context){
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context){
-  text_layer_set_text(s_output_layer, "Up pressed!");
+  MAX_PUNCH = 0;
+  text_layer_set_text(testText, "PUNCH!");
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context){
